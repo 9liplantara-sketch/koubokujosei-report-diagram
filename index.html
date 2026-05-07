@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>図解報告｜公募助成レポート自動化ツール</title>
+    <meta
+      name="description"
+      content="公募助成レポート自動化ツールの図解報告（画面スクリーンショット＋工夫したポイント＋4パーツ設計）"
+    />
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: rgba(255, 255, 255, 0.06);
+        --panel2: rgba(255, 255, 255, 0.09);
+        --border: rgba(255, 255, 255, 0.12);
+        --text: rgba(255, 255, 255, 0.92);
+        --muted: rgba(255, 255, 255, 0.72);
+        --muted2: rgba(255, 255, 255, 0.62);
+        --accent: #7aa7ff;
+        --accent2: #80ffea;
+        --warn: #ffd37a;
+        --good: #8dffb0;
+        --shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+        --radius: 18px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic",
+          "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        background: radial-gradient(1200px 900px at 12% 8%, rgba(122, 167, 255, 0.18), transparent 60%),
+          radial-gradient(1100px 900px at 88% 10%, rgba(128, 255, 234, 0.13), transparent 55%),
+          radial-gradient(1000px 900px at 80% 90%, rgba(255, 211, 122, 0.11), transparent 55%),
+          var(--bg);
+        color: var(--text);
+        line-height: 1.65;
+      }
+      a {
+        color: inherit;
+      }
+
+      .wrap {
+        width: min(1080px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 34px 0 90px;
+      }
+
+      header.hero {
+        position: relative;
+        padding: 28px 26px 24px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+      header.hero::before {
+        content: "";
+        position: absolute;
+        inset: -140px -160px auto auto;
+        width: 520px;
+        height: 520px;
+        background: radial-gradient(circle at 30% 30%, rgba(128, 255, 234, 0.23), transparent 55%),
+          radial-gradient(circle at 60% 60%, rgba(122, 167, 255, 0.22), transparent 60%);
+        filter: blur(12px);
+        transform: rotate(18deg);
+        pointer-events: none;
+      }
+      .kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(0, 0, 0, 0.25);
+        color: var(--muted);
+        font-size: 13px;
+        letter-spacing: 0.02em;
+      }
+      .kicker .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        box-shadow: 0 0 0 6px rgba(122, 167, 255, 0.12);
+      }
+      h1 {
+        margin: 14px 0 10px;
+        font-size: clamp(26px, 4vw, 38px);
+        letter-spacing: -0.02em;
+        line-height: 1.18;
+      }
+      .lead {
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+        max-width: 72ch;
+      }
+      .meta {
+        margin-top: 14px;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .pill {
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 14px;
+        padding: 12px 12px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .pill strong {
+        color: var(--text);
+        font-weight: 650;
+        display: block;
+        font-size: 13px;
+        margin-bottom: 4px;
+      }
+
+      section {
+        margin-top: 22px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.04);
+        padding: 18px;
+      }
+
+      h2 {
+        margin: 0 0 10px;
+        font-size: 18px;
+        letter-spacing: -0.01em;
+      }
+      .note {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .flow {
+        margin-top: 14px;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .card {
+        position: relative;
+        padding: 14px 14px 12px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+        box-shadow: 0 10px 32px rgba(0, 0, 0, 0.22);
+        overflow: hidden;
+      }
+      .card::before {
+        content: "";
+        position: absolute;
+        inset: -40px -60px auto auto;
+        width: 180px;
+        height: 180px;
+        background: radial-gradient(circle at 35% 35%, rgba(122, 167, 255, 0.24), transparent 60%);
+        filter: blur(10px);
+      }
+      .card:nth-child(2)::before {
+        background: radial-gradient(circle at 35% 35%, rgba(255, 211, 122, 0.20), transparent 60%);
+      }
+      .card:nth-child(3)::before {
+        background: radial-gradient(circle at 35% 35%, rgba(128, 255, 234, 0.18), transparent 60%);
+      }
+      .card:nth-child(4)::before {
+        background: radial-gradient(circle at 35% 35%, rgba(141, 255, 176, 0.16), transparent 60%);
+      }
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--muted);
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(0, 0, 0, 0.22);
+      }
+      .tag b {
+        color: var(--text);
+        font-weight: 700;
+        letter-spacing: 0.01em;
+      }
+      .card h3 {
+        margin: 10px 0 6px;
+        font-size: 16px;
+        letter-spacing: -0.01em;
+      }
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .arrow {
+        display: none;
+      }
+
+      .grid2 {
+        margin-top: 12px;
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 14px;
+        align-items: start;
+      }
+
+      .shots {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+      figure {
+        margin: 0;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(0, 0, 0, 0.28);
+      }
+      figure img {
+        display: block;
+        width: 100%;
+        height: auto;
+        background: #111;
+      }
+      figcaption {
+        padding: 10px 12px;
+        color: var(--muted);
+        font-size: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      .points {
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.05);
+        padding: 14px;
+      }
+      .points ul {
+        margin: 8px 0 0;
+        padding-left: 18px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .points li {
+        margin: 6px 0;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(0, 0, 0, 0.22);
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .badge i {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        display: inline-block;
+        background: var(--accent);
+      }
+      .badge.warn i {
+        background: var(--warn);
+      }
+      .badge.good i {
+        background: var(--good);
+      }
+
+      footer {
+        margin-top: 22px;
+        padding: 14px 4px 0;
+        color: var(--muted2);
+        font-size: 12px;
+      }
+      .howto {
+        margin-top: 6px;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        padding-top: 10px;
+      }
+
+      @media (max-width: 980px) {
+        .meta {
+          grid-template-columns: 1fr;
+        }
+        .flow {
+          grid-template-columns: 1fr;
+        }
+        .grid2 {
+          grid-template-columns: 1fr;
+        }
+        .shots {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (min-width: 981px) {
+        .flow {
+          position: relative;
+        }
+        .arrow {
+          display: block;
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          opacity: 0.6;
+        }
+        .arrow svg {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="hero">
+        <div class="kicker"><span class="dot" aria-hidden="true"></span> 図解報告（HTML提出）</div>
+        <h1>公募助成レポート自動化ツール<br />「いつ・どこから・どこで加工・どこへ届ける」を4パーツで可視化</h1>
+        <p class="lead">
+          提出要件の<strong>スクリーンショット</strong>と、設計・デザイン・課題と解決などの<strong>工夫したポイント</strong>をまとめた図解です。
+        </p>
+        <div class="meta">
+          <div class="pill">
+            <strong>目的</strong>
+            締切・対象分野に合う公募/助成を、見落としなく素早く把握して意思決定を楽にする。
+          </div>
+          <div class="pill">
+            <strong>アウトプット</strong>
+            Webで俯瞰できる候補レポート（集計＋一覧）と、LINEでの締切通知。
+          </div>
+          <div class="pill">
+            <strong>特徴</strong>
+            コンペ/助成の<strong>別プロファイル評価</strong>・スコア・除外条件で、迷いを減らす。
+          </div>
+        </div>
+      </header>
+
+      <section>
+        <h2>自動化ツールの必須4パーツ（今回の設計）</h2>
+        <p class="note">
+          4パーツは「トリガー → ソース元 → 処理する場所 → 届ける先」。今回のツールをこの枠で固定し、説明をブレなくしました。
+        </p>
+
+        <div class="flow" aria-label="4パーツの流れ">
+          <div class="arrow" aria-hidden="true">
+            <svg viewBox="0 0 1000 210" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="g1" x1="0" x2="1" y1="0" y2="0">
+                  <stop offset="0" stop-color="rgba(122,167,255,0.65)" />
+                  <stop offset="0.6" stop-color="rgba(128,255,234,0.55)" />
+                  <stop offset="1" stop-color="rgba(141,255,176,0.45)" />
+                </linearGradient>
+                <marker id="arrowHead" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+                  <path d="M0,0 L8,3 L0,6 Z" fill="rgba(255,255,255,0.55)"></path>
+                </marker>
+              </defs>
+              <path
+                d="M230 106 C 290 106, 290 106, 350 106 S 470 106, 520 106 S 650 106, 700 106 S 820 106, 860 106"
+                stroke="url(#g1)"
+                stroke-width="3"
+                fill="none"
+                marker-end="url(#arrowHead)"
+              />
+            </svg>
+          </div>
+
+          <div class="card">
+            <div class="tag"><b>トリガー</b> いつ・何をきっかけに</div>
+            <h3>定期実行（例：毎朝）</h3>
+            <p>「更新があるか」を定時に確認し、候補抽出〜通知までを自動で回す。</p>
+          </div>
+
+          <div class="card">
+            <div class="tag"><b>ソース元</b> データがある場所</div>
+            <h3>公募/助成の情報源</h3>
+            <p>例：e-Rad等の公募情報＋必要に応じて手動で追記する情報。</p>
+          </div>
+
+          <div class="card">
+            <div class="tag"><b>処理する場所</b> 加工してレポート化</div>
+            <h3>スコアリング＋フィルタ</h3>
+            <p>プロファイル（コンペ/助成）別に評価し、除外条件も明示して「残った理由」が分かるようにする。</p>
+          </div>
+
+          <div class="card">
+            <div class="tag"><b>届ける先</b> 完成レポートを届ける</div>
+            <h3>Webレポート＋LINE通知</h3>
+            <p>俯瞰はWeb、見落とし防止はLINE（締切◯日前通知）に分担する。</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>報告ツールの画面（スクリーンショット）</h2>
+        <p class="note">提出要件：報告ツールの画面画像を含める。</p>
+
+        <div class="shots" style="margin-top: 12px">
+          <figure>
+            <img
+              src="スクリーンショット/スクリーンショット%202026-05-07%2021.43.03.png"
+              alt="応募候補レポート（対象分野）集計カードと処理サマリー"
+              loading="lazy"
+            />
+            <figcaption>
+              Webレポート：対象分野ごとの件数カード＋処理サマリー（取得→正規化→スコアリング→出力対象）
+            </figcaption>
+          </figure>
+          <figure>
+            <img
+              src="スクリーンショット/スクリーンショット%202026-05-07%2021.43.14.png"
+              alt="応募候補の一覧表示（タブ、締切、スコア、判定理由）"
+              loading="lazy"
+            />
+            <figcaption>Webレポート：候補一覧（締切・おすすめ度・判定理由）で次の行動に繋げる</figcaption>
+          </figure>
+          <figure>
+            <img
+              src="スクリーンショット/スクリーンショット%202026-05-07%2021.43.23.png"
+              alt="応募候補の詳細表示（タグやスコア内訳を確認）"
+              loading="lazy"
+            />
+            <figcaption>Webレポート：詳細（タグやスコア）を見て「なぜ候補なのか」を短時間で理解</figcaption>
+          </figure>
+          <figure>
+            <img
+              src="スクリーンショット/スクリーンショット%202026-05-07%2021.43.31.png"
+              alt="応募候補の別件詳細（おすすめ度と判定理由）"
+              loading="lazy"
+            />
+            <figcaption>Webレポート：別候補の詳細（おすすめ度・負荷・判定理由）で比較しやすく</figcaption>
+          </figure>
+          <figure>
+            <img
+              src="スクリーンショット/スクリーンショット%202026-05-07%2021.44.12.png"
+              alt="LINE通知（締切7日前の通知）"
+              loading="lazy"
+            />
+            <figcaption>LINE通知：締切7日前の通知（対象件数＋要点）で見落としを防止</figcaption>
+          </figure>
+          <figure>
+            <img
+              src="スクリーンショット/スクリーンショット%202026-05-07%2021.44.23.png"
+              alt="LINE通知（締切7日前の通知の別日）"
+              loading="lazy"
+            />
+            <figcaption>LINE通知：日次運用の例（「今日は該当なし」も返して安心できる）</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section>
+        <h2>工夫したポイント（設計・デザイン・課題と解決）</h2>
+        <div class="grid2">
+          <div class="points">
+            <div class="badge"><i aria-hidden="true"></i> 4パーツの決め方</div>
+            <ul>
+              <li><strong>トリガー</strong>は「人が忘れる領域」を埋めるため、定期実行（毎朝など）を前提に固定。</li>
+              <li>
+                <strong>ソース元</strong>は散らばりがちなので、e-Rad等の主要情報源＋必要な手動情報を「入力側」に寄せる設計に。
+              </li>
+              <li>
+                <strong>処理する場所</strong>に「なぜ残した/落とした」が残るよう、プロファイル別の評価と除外条件（hard_filter）を明示。
+              </li>
+              <li>
+                <strong>届ける先</strong>は用途で分け、俯瞰＝Web、気づき＝LINE（締切◯日前）で役割分担。
+              </li>
+            </ul>
+
+            <div style="height: 12px"></div>
+            <div class="badge good"><i aria-hidden="true"></i> デザインの工夫</div>
+            <ul>
+              <li>最上段に<strong>集計カード</strong>を置き、「全体像→詳細」の視線誘導。</li>
+              <li>一覧では<strong>締切・おすすめ度・判定理由</strong>を同じ行に置き、比較のためのスクロールを減らす。</li>
+              <li>「該当なし」も通知し、<strong>動いている安心感</strong>（運用の可視化）を担保。</li>
+            </ul>
+          </div>
+
+          <div class="points">
+            <div class="badge warn"><i aria-hidden="true"></i> ぶつかった課題 → 解決</div>
+            <ul>
+              <li>
+                <strong>課題</strong>：情報源ごとに表記ゆれ・項目欠けがあり、比較しづらい。<br />
+                <strong>解決</strong>：正規化（URL重複除去など）を処理工程で実施し、処理サマリーで件数を見える化。
+              </li>
+              <li>
+                <strong>課題</strong>：「おすすめ」の根拠が見えないと、結局読み直しが発生。<br />
+                <strong>解決</strong>：判定理由（条件箱）を残し、スコアと一緒に提示して再確認コストを削減。
+              </li>
+              <li>
+                <strong>課題</strong>：Webだけだと締切の見落としが起きる。<br />
+                <strong>解決</strong>：締切◯日前をトリガーにしたLINE通知を併用し、受動的に気づける導線を追加。
+              </li>
+            </ul>
+            <p class="note" style="margin-top: 10px">
+              ※上記はスクリーンショットに写っている「処理サマリー」「判定理由」「LINE通知」から読み取れる範囲で整理しています。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <div><strong>提出方法（HTML URL）</strong></div>
+        <div class="howto">
+          - このフォルダ内の <code>index.html</code> をブラウザで開き、提出先の指定に従ってURLとして提出してください。<br />
+          - 画像は <code>スクリーンショット/</code> を相対参照しているため、提出時はフォルダごと一式で扱うのが安全です。
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

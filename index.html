@@ -147,6 +147,44 @@
         font-size: 14px;
       }
 
+      .premise p {
+        margin: 0 0 0.9em;
+        color: var(--muted);
+        font-size: 14px;
+        max-width: 78ch;
+      }
+      .premise p:last-child {
+        margin-bottom: 0;
+      }
+      .premise h2 {
+        margin-bottom: 8px;
+      }
+      .premise-sub {
+        margin: 14px 0 6px;
+        font-size: 15px;
+        font-weight: 650;
+        color: var(--text);
+        letter-spacing: -0.01em;
+      }
+      .premise ol {
+        margin: 8px 0 0;
+        padding-left: 1.35em;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .premise ol > li {
+        margin: 8px 0;
+      }
+      .premise ol ol {
+        margin-top: 6px;
+        list-style: lower-alpha;
+      }
+      .premise-label {
+        color: var(--accent2);
+        font-weight: 600;
+        margin-right: 0.35em;
+      }
+
       .flow {
         margin-top: 14px;
         display: grid;
@@ -351,6 +389,32 @@
           </div>
         </div>
       </header>
+
+      <section class="premise" id="premise" aria-labelledby="premise-heading">
+        <h2 id="premise-heading">ツール作成の前提</h2>
+        <p>
+          私は<strong>九州大学の教員</strong>として、<strong>外部からの助成金や公募コンペ</strong>などの資金獲得が業務の一部です。
+        </p>
+        <p>
+          研究と並行して、自分に適した助成や公募を<strong>複数のサイトや情報源から定期的に確認し、選定</strong>する必要があります。その結果、
+          <strong>情報の抜け漏れ</strong>で出すべきものに出せなかったり、逆に不要なものへ出してしまったように感じる場面があったりと、
+          <strong>マッチングがうまくいかず選定に時間がかかる</strong>という課題がありました。
+        </p>
+        <p>
+          この課題を減らすため、以下の構成で情報を<strong>集約</strong>し、<strong>自分にマッチする案件をLINEで通知</strong>してくれるツールを作成しました。
+        </p>
+
+        <div class="premise-sub">1. 情報の引き出し元</div>
+        <ol>
+          <li><span class="premise-label">(a)</span> 助成金のサイト <strong>2つ</strong></li>
+          <li><span class="premise-label">(b)</span> コンペのサイト <strong>1つ</strong></li>
+        </ol>
+
+        <div class="premise-sub">2. 通知機能</div>
+        <p>
+          <strong>締切の1週間前</strong>になると、自分にマッチする案件を<strong>LINE</strong>で告知します。（運用に合わせて文言・タイミングは調整できます。）
+        </p>
+      </section>
 
       <section>
         <h2>自動化ツールの必須4パーツ（今回の設計）</h2>
